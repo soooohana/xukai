@@ -32,6 +32,7 @@
         .sync-status.syncing { background: #fff3e0; color: #ff9800; }
         .sync-status.error { background: #ffebee; color: #f44336; }
         
+        /* 게시물 카드 */
         .post-card { border-bottom: 1px solid #efefef; padding: 14px; scroll-margin-top: 120px; transition: background 0.3s; }
         .post-card.highlight { background: #fff9e6; }
         .post-header { display: flex; gap: 10px; margin-bottom: 10px; }
@@ -43,6 +44,7 @@
         .post-location { font-size: 10px; color: #999; margin-top: 2px; }
         .post-content { margin-bottom: 12px; font-size: 14px; line-height: 1.45; white-space: pre-wrap; word-break: break-word; }
         
+        /* 반응형 미디어 그리드 */
         .post-media { display: grid; gap: 4px; margin-bottom: 12px; border-radius: 12px; overflow: hidden; background: #f5f5f5; }
         .post-media.grid-1 { grid-template-columns: 1fr; }
         .post-media.grid-2 { grid-template-columns: repeat(2, 1fr); }
@@ -74,11 +76,17 @@
             background: #000;
         }
         
+        /* 비디오 썸네일을 위한 스타일 */
+        .post-media-item video {
+            background: #1a1a1a;
+        }
+        
         .post-actions { display: flex; gap: 16px; padding-top: 10px; border-top: 1px solid #efefef; flex-wrap: wrap; }
         .action-btn { display: flex; align-items: center; gap: 4px; color: #666; font-size: 12px; background: none; border: none; cursor: pointer; padding: 4px 0; }
         .edit-btn { color: #4caf50; }
         .delete-btn { color: #ff4444; margin-left: auto; }
         
+        /* 보관함 */
         .archive-month { margin-bottom: 24px; }
         .archive-month-header { padding: 12px 16px; background: #fafafa; font-size: 14px; font-weight: 600; color: #ff8200; border-bottom: 1px solid #efefef; position: sticky; top: 110px; background: rgba(255,255,255,0.95); backdrop-filter: blur(8px); z-index: 10; }
         .archive-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 2px; background: #f0f0f0; }
@@ -102,7 +110,24 @@
         .form-group label { display: block; font-size: 13px; font-weight: 500; margin-bottom: 6px; }
         .form-group input, .form-group textarea { width: 100%; padding: 10px 12px; border: 1px solid #ddd; border-radius: 12px; font-size: 13px; font-family: inherit; }
         .form-group textarea { min-height: 80px; resize: vertical; }
-        .form-group input[type="date"] { width: 100%; box-sizing: border-box; }
+        /* 모바일에서 달력 입력창 너비 조정 */
+        .form-group input[type="date"] {
+            width: 100%;
+            box-sizing: border-box;
+            -webkit-appearance: none;
+            appearance: none;
+            font-size: 13px;
+            font-family: inherit;
+            padding: 10px 12px;
+            min-height: 42px;
+            cursor: pointer;
+        }
+        @media (max-width: 480px) {
+            .form-group input[type="date"] {
+                font-size: 16px; /* iOS에서 자동 줌 방지 */
+                padding: 10px 8px;
+            }
+        }
         .file-input-btn { display: inline-block; padding: 8px 14px; background: #efefef; border-radius: 20px; font-size: 12px; cursor: pointer; }
         .media-preview-area { margin-top: 12px; }
         .existing-media-list, .new-media-list { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; max-height: 180px; overflow-y: auto; }
@@ -113,11 +138,13 @@
         .submit-btn { width: 100%; padding: 10px; background: #ff8200; color: white; border: none; border-radius: 24px; font-size: 14px; font-weight: 600; cursor: pointer; margin-top: 12px; }
         .cancel-btn { width: 100%; padding: 10px; background: #efefef; color: #666; border: none; border-radius: 24px; font-size: 14px; font-weight: 600; cursor: pointer; margin-top: 8px; }
         
+        /* 프로필 모달 */
         .profile-preview { display: flex; flex-direction: column; align-items: center; margin-bottom: 20px; }
         .profile-preview-img { width: 100px; height: 100px; border-radius: 50%; background: linear-gradient(135deg, #ff8200, #ffb347); overflow: hidden; margin-bottom: 16px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
         .profile-preview-img img { width: 100%; height: 100%; object-fit: cover; }
         .profile-name-input input { text-align: center; font-size: 14px; font-weight: 600; border: 1px solid #ddd; border-radius: 20px; padding: 8px 16px; width: 200px; max-width: 100%; }
         
+        /* 알림 모달 */
         .alert-modal { background: white; border-radius: 20px; width: 85%; max-width: 320px; text-align: center; }
         .alert-icon { font-size: 40px; padding-top: 20px; }
         .alert-title { font-size: 16px; font-weight: 600; margin: 10px 0 6px; }
@@ -125,11 +152,13 @@
         .alert-files { background: #f5f5f5; margin: 12px 16px; padding: 8px; border-radius: 10px; font-size: 11px; max-height: 120px; overflow-y: auto; text-align: left; }
         .alert-btn { width: 100%; padding: 12px; background: #ff8200; color: white; border: none; font-size: 14px; font-weight: 600; cursor: pointer; margin-top: 12px; border-radius: 0 0 20px 20px; }
         
+        /* 이미지 뷰어 */
         .image-viewer { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 2000; display: none; justify-content: center; align-items: center; }
         .image-viewer.active { display: flex; }
         .image-viewer img { max-width: 90%; max-height: 90%; object-fit: contain; }
         .image-viewer-close { position: absolute; top: 20px; right: 20px; color: white; font-size: 28px; cursor: pointer; width: 44px; height: 44px; background: rgba(0,0,0,0.5); border-radius: 50%; display: flex; align-items: center; justify-content: center; }
         
+        /* 갤러리 모달 */
         .gallery-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 2000; display: none; justify-content: center; align-items: center; }
         .gallery-modal.active { display: flex; }
         .gallery-close { position: absolute; top: 20px; right: 20px; color: white; font-size: 28px; cursor: pointer; width: 44px; height: 44px; background: rgba(0,0,0,0.5); border-radius: 50%; display: flex; align-items: center; justify-content: center; z-index: 2002; }
@@ -142,6 +171,7 @@
         .gallery-prev.hidden, .gallery-next.hidden { visibility: hidden; }
         .gallery-counter { position: absolute; bottom: 20px; background: rgba(0,0,0,0.5); padding: 6px 12px; border-radius: 20px; color: white; font-size: 12px; z-index: 2002; }
         
+        /* 백업 모달 */
         .backup-modal { background: white; border-radius: 20px; width: 85%; max-width: 360px; }
         .backup-options { display: flex; gap: 10px; padding: 16px; flex-wrap: wrap; }
         .backup-btn-item { flex: 1; padding: 10px; background: #f5f5f5; border: none; border-radius: 12px; cursor: pointer; font-size: 13px; }
@@ -303,7 +333,11 @@
         // ==================== Cloudinary 설정 ====================
         const CLOUDINARY_CLOUD_NAME = "dduysrkk7";
         const CLOUDINARY_UPLOAD_PRESET = "weibo_upload";
-        const BACKUP_FILE_NAME = "posts_backup";
+
+        // ==================== JSONBin 설정 (게시물 데이터 동기화용) ====================
+        const JSONBIN_BIN_ID = "69cd88cc856a682189eefb06";
+        const JSONBIN_API_KEY = "$2a$10$/FXh/Agpz01vjrcmEic7wugXaICmT9cXP68MXB3uwRu.asgw6h4NS";
+        const JSONBIN_URL = `https://api.jsonbin.io/v3/b/${JSONBIN_BIN_ID}`;
         
         // ==================== 관리자 인증 ====================
         const ADMIN_PASSWORD = "weibo2024";
@@ -362,66 +396,89 @@
             }
         }
         
-        async function syncPostsToCloudinary() {
+        // ==================== JSONBin 동기화 ====================
+        async function syncPostsToJSONBin() {
             if (!isAdmin()) return;
             updateSyncStatus('syncing');
             try {
                 const data = { version: '1.0', lastUpdated: new Date().toISOString(), posts: posts, profile: currentProfile };
-                const jsonStr = JSON.stringify(data, null, 2);
-                const blob = new Blob([jsonStr], { type: 'application/json' });
-                const file = new File([blob], `${BACKUP_FILE_NAME}.json`, { type: 'application/json' });
-                const formData = new FormData();
-                formData.append('file', file);
-                formData.append('upload_preset', CLOUDINARY_UPLOAD_PRESET);
-                formData.append('public_id', BACKUP_FILE_NAME);
-                formData.append('resource_type', 'raw');
-                formData.append('overwrite', 'true');
-                const response = await fetch(`https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/raw/upload`, { method: 'POST', body: formData });
-                if (!response.ok) throw new Error('업로드 실패');
-                const result = await response.json();
-                localStorage.setItem('cloudinary_backup_url', result.secure_url);
+                const response = await fetch(JSONBIN_URL, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-Master-Key': JSONBIN_API_KEY
+                    },
+                    body: JSON.stringify(data)
+                });
+                if (!response.ok) throw new Error('업로드 실패 ' + response.status);
                 updateSyncStatus('synced');
             } catch (error) {
-                console.error('Cloudinary 동기화 오류:', error);
+                console.error('JSONBin 동기화 오류:', error);
                 updateSyncStatus('error', error.message);
             }
         }
-        
-        async function loadPostsFromCloudinary() {
+
+        async function loadPostsFromJSONBin() {
             updateSyncStatus('syncing');
             try {
-                let backupUrl = localStorage.getItem('cloudinary_backup_url');
-                if (!backupUrl) backupUrl = `https://res.cloudinary.com/${CLOUDINARY_CLOUD_NAME}/raw/upload/${BACKUP_FILE_NAME}.json`;
-                const response = await fetch(backupUrl, { cache: 'no-cache' });
+                const response = await fetch(JSONBIN_URL + '/latest', {
+                    headers: { 'X-Master-Key': JSONBIN_API_KEY }
+                });
                 if (!response.ok) { updateSyncStatus('synced'); return; }
-                const data = await response.json();
-                if (data.posts && Array.isArray(data.posts)) {
-                    const loadedPosts = sortPosts(data.posts);
-                    if (JSON.stringify(posts) !== JSON.stringify(loadedPosts)) {
-                        posts = loadedPosts;
-                        savePosts();
-                    }
+                const result = await response.json();
+                const data = result.record;
+                if (data && data.posts && Array.isArray(data.posts)) {
+                    posts = sortPosts(data.posts);
+                    savePosts();
+                    if (data.lastUpdated) lastCloudinaryUpdated = data.lastUpdated;
                     if (data.profile) { currentProfile = data.profile; saveCurrentProfile(); updateProfileUI(); }
+                    updateSyncStatus('synced');
+                } else {
                     updateSyncStatus('synced');
                 }
             } catch (error) {
-                updateSyncStatus('synced');
+                console.log('JSONBin에서 데이터를 불러올 수 없습니다:', error);
+                updateSyncStatus('error', '불러오기 실패');
             }
         }
         
         function scheduleSync() {
             if (!isAdmin()) return;
             if (syncTimeout) clearTimeout(syncTimeout);
-            syncTimeout = setTimeout(() => { syncPostsToCloudinary(); }, 2000);
+            syncTimeout = setTimeout(() => { syncPostsToJSONBin(); }, 1000);
         }
-        
-        // ==================== 비디오 썸네일 URL 생성 ====================
-        function getVideoThumbnail(videoUrl) {
-            if (!videoUrl) return '';
-            if (videoUrl.includes('cloudinary.com')) {
-                return videoUrl.replace('/upload/', '/upload/so_1/');
-            }
-            return '';
+
+        // ==================== 자동 폴링 (비관리자 포함, 30초마다 최신 데이터 확인) ====================
+        let lastCloudinaryUpdated = null;
+        async function pollForUpdates() {
+            try {
+                const response = await fetch(JSONBIN_URL + '/latest', {
+                    headers: { 'X-Master-Key': JSONBIN_API_KEY }
+                });
+                if (!response.ok) return;
+                const result = await response.json();
+                const data = result.record;
+                if (data && data.posts && Array.isArray(data.posts)) {
+                    const remoteUpdated = data.lastUpdated || '';
+                    if (remoteUpdated && remoteUpdated !== lastCloudinaryUpdated) {
+                        lastCloudinaryUpdated = remoteUpdated;
+                        posts = sortPosts(data.posts);
+                        localStorage.setItem('weibo_posts_v16', JSON.stringify(posts));
+                        if (data.profile) { currentProfile = data.profile; saveCurrentProfile(); updateProfileUI(); }
+                        if (activeTab === 'posts') renderPosts(); else renderArchive();
+                        updateSyncStatus('synced');
+                    }
+                }
+            } catch(e) { /* 폴링 오류 무시 */ }
+        }
+
+        function startAutoPolling() {
+            // 30초마다 Cloudinary에서 최신 데이터 확인
+            setInterval(pollForUpdates, 30000);
+            // 페이지 포커스 시에도 즉시 확인 (탭 전환, 앱 복귀 등)
+            document.addEventListener('visibilitychange', () => {
+                if (document.visibilityState === 'visible') pollForUpdates();
+            });
         }
         
         // ==================== 데이터 ====================
@@ -455,6 +512,7 @@
                 const data = await response.json();
                 return { success: true, url: data.secure_url, type: data.resource_type === 'video' ? 'video' : 'image', originalName: file.name };
             } catch (error) {
+                console.error('Cloudinary 업로드 오류:', error);
                 return { success: false, error: error.message };
             }
         }
@@ -506,17 +564,17 @@
         
         // ==================== 데이터 저장/로드 ====================
         async function loadData() {
-            const saved = localStorage.getItem('weibo_posts_v18');
-            if (saved) { posts = JSON.parse(saved); posts = sortPosts(posts); }
+            await loadPostsFromJSONBin();
+            const saved = localStorage.getItem('weibo_posts_v16');
+            if (saved && posts.length === 0) { posts = JSON.parse(saved); posts = sortPosts(posts); }
             const savedProfile = localStorage.getItem('weibo_current_profile');
-            if (savedProfile) currentProfile = JSON.parse(savedProfile);
+            if (savedProfile && !currentProfile.imagePath) currentProfile = JSON.parse(savedProfile);
             updateProfileUI();
-            await loadPostsFromCloudinary();
             if (activeTab === 'posts') renderPosts(); else renderArchive();
             updateSyncStatus('synced');
         }
         
-        function savePosts() { localStorage.setItem('weibo_posts_v18', JSON.stringify(posts)); scheduleSync(); }
+        function savePosts() { localStorage.setItem('weibo_posts_v16', JSON.stringify(posts)); scheduleSync(); }
         function saveCurrentProfile() { localStorage.setItem('weibo_current_profile', JSON.stringify(currentProfile)); scheduleSync(); }
         
         function getFilteredPosts() {
@@ -527,6 +585,7 @@
             return filtered;
         }
         
+        // ==================== 미디어 그리드 클래스 결정 ====================
         function getMediaGridClass(count) {
             if (count === 1) return 'grid-1';
             if (count === 2) return 'grid-2';
@@ -534,6 +593,7 @@
             return 'grid-3';
         }
         
+        // ==================== 렌더링 함수들 ====================
         function formatDate(str) { const d = new Date(str); return `${d.getFullYear()}.${d.getMonth()+1}.${d.getDate()}`; }
         function escapeHtml(t) { const div = document.createElement('div'); div.textContent = t; return div.innerHTML; }
         
@@ -548,6 +608,17 @@
                 const el = document.getElementById(`post-${postId}`);
                 if (el) { el.scrollIntoView({ behavior: 'smooth', block: 'start' }); el.classList.add('highlight'); setTimeout(() => el.classList.remove('highlight'), 1000); }
             }
+        }
+        
+        // 비디오 썸네일을 Cloudinary 이미지 URL로 변환 (video 태그 대신 img 태그 사용 → 빠르고 안정적)
+        function getVideoThumbnailUrl(videoUrl) {
+            if (videoUrl.includes('cloudinary.com')) {
+                // /upload/ → /upload/so_1/ 로 변경하고 확장자를 .jpg로 변경
+                return videoUrl
+                    .replace('/upload/', '/upload/so_1/')
+                    .replace(/\.(mp4|mov|avi|mkv|webm|m4v)(\?.*)?$/i, '.jpg');
+            }
+            return null;
         }
         
         function renderPosts() {
@@ -581,15 +652,16 @@
                 const mediaHtml = post.media.length ? `
                     <div class="post-media ${gridClass}">
                         ${post.media.map((m, i) => {
-                            const thumbnailUrl = m.type === 'video' ? getVideoThumbnail(m.filePath) : '';
+                            const thumbUrl = m.type === 'video' ? getVideoThumbnailUrl(m.filePath) : null;
                             return `
                                 <div class="post-media-item" onclick="openGallery(${post.id}, ${i})">
                                     ${m.type === 'video' ? 
-                                        `<img src="${thumbnailUrl}" style="width:100%;height:100%;object-fit:cover;" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
-                                        <video style="display:none; width:100%;height:100%;object-fit:cover;" preload="metadata">
-                                            <source src="${m.filePath}" type="video/mp4">
-                                            <source src="${m.filePath}" type="video/quicktime">
-                                        </video>` : 
+                                        thumbUrl
+                                            ? `<img src="${thumbUrl}" loading="lazy" onerror="this.outerHTML='<video preload=\\'metadata\\' style=\\'width:100%;height:100%;object-fit:cover;\\'><source src=\\'${m.filePath}\\' type=\\'video/mp4\\'></video>'">
+                                               <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);background:rgba(0,0,0,0.55);border-radius:50%;width:36px;height:36px;display:flex;align-items:center;justify-content:center;font-size:18px;pointer-events:none;">▶</div>`
+                                            : `<video preload="metadata" style="width:100%;height:100%;object-fit:cover;"><source src="${m.filePath}" type="video/mp4"><source src="${m.filePath}" type="video/quicktime"></video>
+                                               <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);background:rgba(0,0,0,0.55);border-radius:50%;width:36px;height:36px;display:flex;align-items:center;justify-content:center;font-size:18px;pointer-events:none;">▶</div>`
+                                        : 
                                         `<img src="${m.filePath}" loading="lazy" onerror="this.src='data:image/svg+xml,%3Csvg...%3E'">`
                                     }
                                 </div>
@@ -683,16 +755,16 @@
                     <div class="archive-month-header">📅 ${group.year}년 ${group.month}월 (${group.items.length}개)</div>
                     <div class="archive-grid">
                         ${group.items.map(item => {
-                            const thumbnailUrl = item.type === 'video' ? getVideoThumbnail(item.filePath) : '';
+                            const thumbUrl = item.type === 'video' ? getVideoThumbnailUrl(item.filePath) : null;
                             return `
                                 <div class="archive-item" onclick="scrollToPost(${item.postId})">
-                                    ${item.type === 'video' ? 
-                                        `<img src="${thumbnailUrl}" style="width:100%;height:100%;object-fit:cover;" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
-                                        <video style="display:none; width:100%;height:100%;object-fit:cover;" preload="metadata">
-                                            <source src="${item.filePath}" type="video/mp4">
-                                            <source src="${item.filePath}" type="video/quicktime">
-                                        </video>
-                                        <div class="archive-item-badge">🎬</div>` :
+                                    ${item.type === 'video' ?
+                                        thumbUrl
+                                            ? `<img src="${thumbUrl}" loading="lazy" onerror="this.outerHTML='<video preload=\\'metadata\\' style=\\'width:100%;height:100%;object-fit:cover;\\'><source src=\\'${item.filePath}\\' type=\\'video/mp4\\'></video>'">
+                                               <div class="archive-item-badge">🎬</div>`
+                                            : `<video preload="metadata" style="width:100%;height:100%;object-fit:cover;"><source src="${item.filePath}" type="video/mp4"><source src="${item.filePath}" type="video/quicktime"></video>
+                                               <div class="archive-item-badge">🎬</div>`
+                                        :
                                         `<img src="${item.filePath}" loading="lazy">`
                                     }
                                 </div>
@@ -1085,12 +1157,11 @@
         
         loadData();
         updateAdminUI();
+        startAutoPolling();
         
         if (!isAdmin()) {
             document.querySelectorAll('.edit-btn, .delete-btn').forEach(btn => { if (btn.style) btn.style.display = 'none'; });
         }
-        
-        setInterval(() => { if (isAdmin()) loadPostsFromCloudinary(); }, 10000);
     </script>
 </body>
 </html>
