@@ -6,7 +6,7 @@
     <link rel="preconnect" href="https://res.cloudinary.com">
     <link rel="dns-prefetch" href="https://api.cloudinary.com">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Weibo Backup - 배우 웨이보 백업</title>
+    <title>🐷 许凯 Weibo - 허개 웨이보 백업</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { background-color: #f0f0f0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; }
@@ -230,6 +230,10 @@
       <symbol id="ic-heart" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
         <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
       </symbol>
+      <!-- 채워진 하트 -->
+      <symbol id="ic-heart-fill" viewBox="0 0 24 24" fill="#ff4d6d" stroke="#ff4d6d" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+      </symbol>
       <!-- 말풍선(댓글) -->
       <symbol id="ic-comment" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
         <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
@@ -295,9 +299,9 @@
     <div class="container">
         <div class="header">
             <div class="header-top">
-                <h1>🐼 Weibo Backup <span>배우백업</span></h1>
+                <h1>许凯<span>soso</span></h1>
                 <div class="header-buttons">
-                    <div class="top-avatar" id="topAvatarBtn"><span>🐣</span></div>
+                    <div class="top-avatar" id="topAvatarBtn"><span>🐷</span></div>
                     <button class="icon-btn" id="backupBtn"><svg width="18" height="18" aria-hidden="true"><use href="#ic-save"/></svg></button>
                     <button class="add-btn" id="addBtn" style="display: none;"><svg width="20" height="20" aria-hidden="true"><use href="#ic-plus"/></svg></button>
                     <button class="icon-btn" id="adminBtn" style="background: #ff8200; color: white;"><svg width="18" height="18" aria-hidden="true"><use href="#ic-lock"/></svg></button>
@@ -442,7 +446,7 @@
         const JSONBIN_URL = `https://api.jsonbin.io/v3/b/${JSONBIN_BIN_ID}`;
         
         // ==================== 관리자 인증 ====================
-        const ADMIN_PASSWORD = "weibo2024";
+        const ADMIN_PASSWORD = "weibo950305";
         
         function isAdmin() { return localStorage.getItem("weibo_admin") === "true"; }
         
@@ -607,7 +611,7 @@
         const POSTS_PER_PAGE = 10;
         const ARCHIVE_PER_PAGE = 100;
         
-        let currentProfile = { name: "🐼 팬더 배우", imagePath: "images/profile.jpg" };
+        let currentProfile = { name: "허개🐷", imagePath: "images/profile.jpg" };
         const LIKES = 1995, COMMENTS = 305, RETWEETS = 486;
         
         let editingPostId = null;
@@ -806,7 +810,7 @@
                                 <img src="${profileData.imagePath}" onerror="this.style.display='none';this.parentElement.innerHTML='<span>🐣</span>'">
                             </div>
                             <div class="post-user-info">
-                                <h3>${escapeHtml(profileData.name)}<span class="badge">🎬</span></h3>
+                                <h3>${escapeHtml(profileData.name)}<span class="badge">♥︎</span></h3>
                                 <div class="post-date"><svg width="11" height="11" aria-hidden="true"><use href="#ic-calendar"/></svg> ${formatDate(post.date)}</div>
                                 ${post.location ? `<div class="post-location"><svg width="11" height="11" aria-hidden="true"><use href="#ic-pin"/></svg> ${escapeHtml(post.location)}</div>` : ''}
                             </div>
@@ -814,7 +818,7 @@
                         <div class="post-content">${escapeHtml(post.content)}</div>
                         ${mediaHtml}
                         <div class="post-actions">
-                            <button class="action-btn"><svg width="14" height="14" aria-hidden="true"><use href="#ic-heart"/></svg> ${LIKES.toLocaleString()}</button>
+                            <button class="action-btn"><svg width="14" height="14" aria-hidden="true"><use href="#ic-heart-fill"/></svg> ${LIKES.toLocaleString()}</button>
                             <button class="action-btn"><svg width="14" height="14" aria-hidden="true"><use href="#ic-comment"/></svg> ${COMMENTS.toLocaleString()}</button>
                             <button class="action-btn"><svg width="14" height="14" aria-hidden="true"><use href="#ic-retweet"/></svg> ${RETWEETS.toLocaleString()}</button>
                             <button class="action-btn edit-btn" onclick="openPostModal(${post.id})" ${!isAdmin() ? 'style="display:none"' : ''}><svg width="14" height="14" aria-hidden="true"><use href="#ic-edit"/></svg></button>
