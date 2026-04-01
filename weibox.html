@@ -564,14 +564,16 @@
         
         // ==================== 데이터 저장/로드 ====================
         async function loadData() {
-            await loadPostsFromJSONBin();
+            // 1단계: localStorage 캐시로 즉시 렌더링 (빠름)
             const saved = localStorage.getItem('weibo_posts_v16');
-            if (saved && posts.length === 0) { posts = JSON.parse(saved); posts = sortPosts(posts); }
+            if (saved) { posts = JSON.parse(saved); posts = sortPosts(posts); }
             const savedProfile = localStorage.getItem('weibo_current_profile');
-            if (savedProfile && !currentProfile.imagePath) currentProfile = JSON.parse(savedProfile);
+            if (savedProfile) { const p = JSON.parse(savedProfile); if (p) currentProfile = p; }
             updateProfileUI();
             if (activeTab === 'posts') renderPosts(); else renderArchive();
-            updateSyncStatus('synced');
+
+            // 2단계: 백그라운드에서 JSONBin 동기화 (느려도 화면은 이미 떠있음)
+            loadPostsFromJSONBin();
         }
         
         function savePosts() { localStorage.setItem('weibo_posts_v16', JSON.stringify(posts)); scheduleSync(); }
@@ -610,13 +612,24 @@
             }
         }
         
+        // Cloudinary 영상 URL을 H.264 MP4로 강제 변환 (HEVC/H.265 크로스브라우저 문제 해결)
+        function getVideoUrl(videoUrl) {
+            if (videoUrl.includes('cloudinary.com')) {
+                // vc_h264: H.264로 트랜스코딩, ac_aac: 오디오 AAC
+                // f_mp4: MP4 컨테이너 강제
+                return videoUrl
+                    .replace('/upload/', '/upload/vc_h264,ac_aac,f_mp4/')
+                    .replace(/\.(mov|avi|mkv|webm|m4v|MP4)(\?.*)?$/i, '.mp4');
+            }
+            return videoUrl;
+        }
+
         // 비디오 썸네일을 Cloudinary 이미지 URL로 변환 (video 태그 대신 img 태그 사용 → 빠르고 안정적)
         function getVideoThumbnailUrl(videoUrl) {
             if (videoUrl.includes('cloudinary.com')) {
-                // /upload/ → /upload/so_1/ 로 변경하고 확장자를 .jpg로 변경
                 return videoUrl
-                    .replace('/upload/', '/upload/so_1/')
-                    .replace(/\.(mp4|mov|avi|mkv|webm|m4v)(\?.*)?$/i, '.jpg');
+                    .replace('/upload/', '/upload/so_1,f_jpg,q_60/')
+                    .replace(/\.(mp4|mov|avi|mkv|webm|m4v|MP4)(\?.*)?$/i, '.jpg');
             }
             return null;
         }
@@ -657,7 +670,7 @@
                                 <div class="post-media-item" onclick="openGallery(${post.id}, ${i})">
                                     ${m.type === 'video' ? 
                                         thumbUrl
-                                            ? `<img src="${thumbUrl}" loading="lazy" onerror="this.outerHTML='<video preload=\\'metadata\\' style=\\'width:100%;height:100%;object-fit:cover;\\'><source src=\\'${m.filePath}\\' type=\\'video/mp4\\'></video>'">
+                                            ? `<img src="${thumbUrl}" loading="lazy" onerror="this.outerHTML='<video preload=\\'metadata\\' style=\\'width:100%;height:100%;object-fit:cover;\\'><source src=\\'${getVideoUrl(m.filePath)}\\' type=\\'video/mp4\\'></video>'">
                                                <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);background:rgba(0,0,0,0.55);border-radius:50%;width:36px;height:36px;display:flex;align-items:center;justify-content:center;font-size:18px;pointer-events:none;">▶</div>`
                                             : `<video preload="metadata" style="width:100%;height:100%;object-fit:cover;"><source src="${m.filePath}" type="video/mp4"><source src="${m.filePath}" type="video/quicktime"></video>
                                                <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);background:rgba(0,0,0,0.55);border-radius:50%;width:36px;height:36px;display:flex;align-items:center;justify-content:center;font-size:18px;pointer-events:none;">▶</div>`
@@ -760,7 +773,7 @@
                                 <div class="archive-item" onclick="scrollToPost(${item.postId})">
                                     ${item.type === 'video' ?
                                         thumbUrl
-                                            ? `<img src="${thumbUrl}" loading="lazy" onerror="this.outerHTML='<video preload=\\'metadata\\' style=\\'width:100%;height:100%;object-fit:cover;\\'><source src=\\'${item.filePath}\\' type=\\'video/mp4\\'></video>'">
+                                            ? `<img src="${thumbUrl}" loading="lazy" onerror="this.outerHTML='<video preload=\\'metadata\\' style=\\'width:100%;height:100%;object-fit:cover;\\'><source src=\\'${getVideoUrl(item.filePath)}\\' type=\\'video/mp4\\'></video>'">
                                                <div class="archive-item-badge">🎬</div>`
                                             : `<video preload="metadata" style="width:100%;height:100%;object-fit:cover;"><source src="${item.filePath}" type="video/mp4"><source src="${item.filePath}" type="video/quicktime"></video>
                                                <div class="archive-item-badge">🎬</div>`
@@ -955,7 +968,7 @@
                     webkit-playsinline
                     x5-playsinline
                     style="max-width:90vw;max-height:80vh;width:auto;height:auto;display:block;background:#000;">
-                    <source src="${item.filePath}#t=0.001" type="video/mp4">
+                    <source src="${getVideoUrl(item.filePath)}#t=0.001" type="video/mp4">
                     <source src="${item.filePath}#t=0.001" type="video/quicktime">
                 </video>`;
                 // DOM에 추가된 후 재생 시도
