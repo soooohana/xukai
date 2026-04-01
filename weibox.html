@@ -111,7 +111,23 @@
         .form-group input, .form-group textarea { width: 100%; padding: 10px 12px; border: 1px solid #ddd; border-radius: 12px; font-size: 13px; font-family: inherit; }
         .form-group textarea { min-height: 80px; resize: vertical; }
         /* 모바일에서 달력 입력창 너비 조정 */
-        .form-group input[type="date"] { width: 100%; box-sizing: border-box; }
+        .form-group input[type="date"] {
+            width: 100%;
+            box-sizing: border-box;
+            -webkit-appearance: none;
+            appearance: none;
+            font-size: 13px;
+            font-family: inherit;
+            padding: 10px 12px;
+            min-height: 42px;
+            cursor: pointer;
+        }
+        @media (max-width: 480px) {
+            .form-group input[type="date"] {
+                font-size: 16px; /* iOS에서 자동 줌 방지 */
+                padding: 10px 8px;
+            }
+        }
         .file-input-btn { display: inline-block; padding: 8px 14px; background: #efefef; border-radius: 20px; font-size: 12px; cursor: pointer; }
         .media-preview-area { margin-top: 12px; }
         .existing-media-list, .new-media-list { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; max-height: 180px; overflow-y: auto; }
@@ -411,6 +427,7 @@
                 if (data.posts && Array.isArray(data.posts)) {
                     posts = sortPosts(data.posts);
                     savePosts();
+                    if (data.lastUpdated) lastCloudinaryUpdated = data.lastUpdated;
                     if (data.profile) { currentProfile = data.profile; saveCurrentProfile(); updateProfileUI(); }
                     updateSyncStatus('synced');
                 }
@@ -424,6 +441,41 @@
             if (!isAdmin()) return;
             if (syncTimeout) clearTimeout(syncTimeout);
             syncTimeout = setTimeout(() => { syncPostsToCloudinary(); }, 1000);
+        }
+
+        // ==================== 자동 폴링 (비관리자 포함, 30초마다 최신 데이터 확인) ====================
+        let lastCloudinaryUpdated = null;
+        async function pollForUpdates() {
+            try {
+                let backupUrl = localStorage.getItem('cloudinary_backup_url');
+                if (!backupUrl) backupUrl = `https://res.cloudinary.com/${CLOUDINARY_CLOUD_NAME}/raw/upload/${BACKUP_FILE_NAME}`;
+                // 캐시 우회를 위해 타임스탬프 파라미터 추가
+                const cacheBust = `?v=${Date.now()}`;
+                const response = await fetch(backupUrl + cacheBust);
+                if (!response.ok) return;
+                const data = await response.json();
+                if (data.posts && Array.isArray(data.posts)) {
+                    const remoteUpdated = data.lastUpdated || '';
+                    // 서버 데이터가 로컬보다 새로우면 업데이트
+                    if (remoteUpdated && remoteUpdated !== lastCloudinaryUpdated) {
+                        lastCloudinaryUpdated = remoteUpdated;
+                        posts = sortPosts(data.posts);
+                        localStorage.setItem('weibo_posts_v16', JSON.stringify(posts));
+                        if (data.profile) { currentProfile = data.profile; saveCurrentProfile(); updateProfileUI(); }
+                        if (activeTab === 'posts') renderPosts(); else renderArchive();
+                        updateSyncStatus('synced');
+                    }
+                }
+            } catch(e) { /* 폴링 오류 무시 */ }
+        }
+
+        function startAutoPolling() {
+            // 30초마다 Cloudinary에서 최신 데이터 확인
+            setInterval(pollForUpdates, 30000);
+            // 페이지 포커스 시에도 즉시 확인 (탭 전환, 앱 복귀 등)
+            document.addEventListener('visibilitychange', () => {
+                if (document.visibilityState === 'visible') pollForUpdates();
+            });
         }
         
         // ==================== 데이터 ====================
@@ -555,13 +607,15 @@
             }
         }
         
-        // 비디오 썸네일 생성을 위한 함수 (poster 속성 추가)
-        function getVideoPoster(videoUrl) {
-            // Cloudinary 비디오에서 썸네일 생성 (1초 지점)
+        // 비디오 썸네일을 Cloudinary 이미지 URL로 변환 (video 태그 대신 img 태그 사용 → 빠르고 안정적)
+        function getVideoThumbnailUrl(videoUrl) {
             if (videoUrl.includes('cloudinary.com')) {
-                return videoUrl.replace('/upload/', '/upload/so_1/');
+                // /upload/ → /upload/so_1/ 로 변경하고 확장자를 .jpg로 변경
+                return videoUrl
+                    .replace('/upload/', '/upload/so_1/')
+                    .replace(/\.(mp4|mov|avi|mkv|webm|m4v)(\?.*)?$/i, '.jpg');
             }
-            return '';
+            return null;
         }
         
         function renderPosts() {
@@ -595,14 +649,16 @@
                 const mediaHtml = post.media.length ? `
                     <div class="post-media ${gridClass}">
                         ${post.media.map((m, i) => {
-                            const posterUrl = m.type === 'video' ? getVideoPoster(m.filePath) : '';
+                            const thumbUrl = m.type === 'video' ? getVideoThumbnailUrl(m.filePath) : null;
                             return `
                                 <div class="post-media-item" onclick="openGallery(${post.id}, ${i})">
                                     ${m.type === 'video' ? 
-                                        `<video preload="metadata" poster="${posterUrl}" style="width:100%;height:100%;object-fit:cover;">
-                                            <source src="${m.filePath}" type="video/mp4">
-                                            <source src="${m.filePath}" type="video/quicktime">
-                                        </video>` : 
+                                        thumbUrl
+                                            ? `<img src="${thumbUrl}" loading="lazy" onerror="this.outerHTML='<video preload=\\'metadata\\' style=\\'width:100%;height:100%;object-fit:cover;\\'><source src=\\'${m.filePath}\\' type=\\'video/mp4\\'></video>'">
+                                               <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);background:rgba(0,0,0,0.55);border-radius:50%;width:36px;height:36px;display:flex;align-items:center;justify-content:center;font-size:18px;pointer-events:none;">▶</div>`
+                                            : `<video preload="metadata" style="width:100%;height:100%;object-fit:cover;"><source src="${m.filePath}" type="video/mp4"><source src="${m.filePath}" type="video/quicktime"></video>
+                                               <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);background:rgba(0,0,0,0.55);border-radius:50%;width:36px;height:36px;display:flex;align-items:center;justify-content:center;font-size:18px;pointer-events:none;">▶</div>`
+                                        : 
                                         `<img src="${m.filePath}" loading="lazy" onerror="this.src='data:image/svg+xml,%3Csvg...%3E'">`
                                     }
                                 </div>
@@ -696,12 +752,16 @@
                     <div class="archive-month-header">📅 ${group.year}년 ${group.month}월 (${group.items.length}개)</div>
                     <div class="archive-grid">
                         ${group.items.map(item => {
-                            const posterUrl = item.type === 'video' ? getVideoPoster(item.filePath) : '';
+                            const thumbUrl = item.type === 'video' ? getVideoThumbnailUrl(item.filePath) : null;
                             return `
                                 <div class="archive-item" onclick="scrollToPost(${item.postId})">
-                                    ${item.type === 'video' ? 
-                                        `<video preload="metadata" poster="${posterUrl}"><source src="${item.filePath}" type="video/mp4"><source src="${item.filePath}" type="video/quicktime"></video>
-                                         <div class="archive-item-badge">🎬</div>` :
+                                    ${item.type === 'video' ?
+                                        thumbUrl
+                                            ? `<img src="${thumbUrl}" loading="lazy" onerror="this.outerHTML='<video preload=\\'metadata\\' style=\\'width:100%;height:100%;object-fit:cover;\\'><source src=\\'${item.filePath}\\' type=\\'video/mp4\\'></video>'">
+                                               <div class="archive-item-badge">🎬</div>`
+                                            : `<video preload="metadata" style="width:100%;height:100%;object-fit:cover;"><source src="${item.filePath}" type="video/mp4"><source src="${item.filePath}" type="video/quicktime"></video>
+                                               <div class="archive-item-badge">🎬</div>`
+                                        :
                                         `<img src="${item.filePath}" loading="lazy">`
                                     }
                                 </div>
@@ -1094,6 +1154,7 @@
         
         loadData();
         updateAdminUI();
+        startAutoPolling();
         
         if (!isAdmin()) {
             document.querySelectorAll('.edit-btn, .delete-btn').forEach(btn => { if (btn.style) btn.style.display = 'none'; });
