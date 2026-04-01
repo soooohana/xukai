@@ -945,7 +945,25 @@
             const container = document.getElementById('galleryMediaContainer');
             if (!container) return;
             if (item.type === 'video') {
-                container.innerHTML = `<video class="gallery-media" controls autoplay style="max-width:90%;max-height:85vh;object-fit:contain;"><source src="${item.filePath}" type="video/mp4"><source src="${item.filePath}" type="video/quicktime"></video>`;
+                // playsinline: iOS에서 전체화면 강제 방지, 인라인 재생
+                // webkit-playsinline: 구형 iOS Safari 대응
+                // autoplay muted 후 소리 켜기: 브라우저 자동재생 정책 우회
+                container.innerHTML = `<video 
+                    class="gallery-media" 
+                    controls 
+                    playsinline
+                    webkit-playsinline
+                    x5-playsinline
+                    style="max-width:90vw;max-height:80vh;width:auto;height:auto;display:block;background:#000;">
+                    <source src="${item.filePath}#t=0.001" type="video/mp4">
+                    <source src="${item.filePath}#t=0.001" type="video/quicktime">
+                </video>`;
+                // DOM에 추가된 후 재생 시도
+                const vid = container.querySelector('video');
+                if (vid) {
+                    vid.load();
+                    vid.play().catch(() => {}); // 자동재생 실패해도 무시
+                }
             } else {
                 container.innerHTML = `<img class="gallery-media" src="${item.filePath}" onerror="this.src='data:image/svg+xml,%3Csvg...%3E'">`;
             }
